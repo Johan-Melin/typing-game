@@ -7,6 +7,7 @@ const settingsBtn = document.getElementById('settings-btn');
 const settings = document.getElementById('settings');
 const settingsForm = document.getElementById('settings-form');
 const difficultySelect = document.getElementById('difficulty');
+const instructions = document.getElementById("instructions");
 
 // List of words for game
 const words = [
@@ -41,6 +42,19 @@ let score = 0;
 // Init time
 let time = 10;
 
+// Don't start the timer until typing has begun
+let gameStarted = false;
+
+// Link to updateTime() to clear timer on game over
+let interval;
+
+// Starts the timer
+function startGame() {
+  gameStarted = true;
+  instructions.innerText = "Type the following:";
+  interval = setInterval(updateTime, 1000);
+}
+
 // Set difficulty to value in ls or medium
 let difficulty =
   localStorage.getItem('difficulty') !== null
@@ -55,9 +69,6 @@ difficultySelect.value =
 
 // Focus on text on start
 text.focus();
-
-// Start counting down
-const timeInterval = setInterval(updateTime, 1000);
 
 // Generate random word from array
 function getRandomWord() {
@@ -80,9 +91,10 @@ function updateScore() {
 function updateTime() {
   time--;
   timeEl.innerHTML = time + 's';
+  console.log(time);
 
   if (time === 0) {
-    clearInterval(timeInterval);
+    clearInterval(interval);
     // end game
     gameOver();
   }
@@ -105,6 +117,7 @@ addWordToDOM();
 
 // Typing
 text.addEventListener('input', e => {
+  if (!gameStarted) startGame();
   const insertedText = e.target.value;
 
   if (insertedText === randomWord) {
@@ -133,4 +146,5 @@ settingsBtn.addEventListener('click', () => settings.classList.toggle('hide'));
 settingsForm.addEventListener('change', e => {
   difficulty = e.target.value;
   localStorage.setItem('difficulty', difficulty);
+  location.reload();
 });

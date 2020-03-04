@@ -115,3 +115,8 @@ input {
   height: 100%;
   z-index: 1;
 }
+
+.icon {
+  font-size: 24px;
+  font-weight: bold;
+}
