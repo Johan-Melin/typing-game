@@ -34,7 +34,7 @@ const words = [
 
 let randomWord,
   score = 0,
-  time = 10,
+  time = 60,
   gameStarted = false,
   interval,
   charPos = 0,
