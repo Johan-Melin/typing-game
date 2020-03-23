@@ -130,3 +130,8 @@ input {
 span {
   margin: 5px;
 }
+
+#word {
+  height: 1em;
+  line-height: 1;
+}
