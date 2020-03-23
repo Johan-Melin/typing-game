@@ -1,15 +1,14 @@
-const word = document.getElementById('word');
-const text = document.getElementById('text');
-const scoreEl = document.getElementById('score');
-const timeEl = document.getElementById('time');
-const endgameEl = document.getElementById('end-game-container');
-const settingsBtn = document.getElementById('settings-btn');
-const settings = document.getElementById('settings');
-const settingsForm = document.getElementById('settings-form');
-const difficultySelect = document.getElementById('difficulty');
-const instructions = document.getElementById("instructions");
+const word = document.getElementById('word'),
+  text = document.getElementById('text'),
+  scoreEl = document.getElementById('score'),
+  timeEl = document.getElementById('time'),
+  endgameEl = document.getElementById('end-game-container'),
+  settingsBtn = document.getElementById('settings-btn'),
+  settings = document.getElementById('settings'),
+  settingsForm = document.getElementById('settings-form'),
+  difficultySelect = document.getElementById('difficulty'),
+  instructions = document.getElementById("instructions");
 
-// List of words for game
 const words = [
   'sigh',
   'tense',
@@ -33,78 +32,63 @@ const words = [
   'loving'
 ];
 
-// Init word
-let randomWord;
+let randomWord,
+  score = 0,
+  time = 60,
+  gameStarted = false,
+  interval,
+  charPos = 0;
 
-// Init score
-let score = 0;
+let difficulty =
+  localStorage.getItem('difficulty') !== null
+    ? localStorage.getItem('difficulty')
+    : 'medium';
 
-// Init time
-let time = 10;
+difficultySelect.value = difficulty;
 
-// Don't start the timer until typing has begun
-let gameStarted = false;
-
-// Link to updateTime() to clear timer on game over
-let interval;
-
-// Starts the timer
 function startGame() {
   gameStarted = true;
   instructions.innerText = "Type the following:";
   interval = setInterval(updateTime, 1000);
 }
 
-// Set difficulty to value in ls or medium
-let difficulty =
-  localStorage.getItem('difficulty') !== null
-    ? localStorage.getItem('difficulty')
-    : 'medium';
-
-// Set difficulty select value
-difficultySelect.value =
-  localStorage.getItem('difficulty') !== null
-    ? localStorage.getItem('difficulty')
-    : 'medium';
-
-// Focus on text on start
 text.focus();
 
-// Generate random word from array
 function getRandomWord() {
   return words[Math.floor(Math.random() * words.length)];
 }
 
-// Add word to DOM
 function addWordToDOM() {
   randomWord = getRandomWord();
   word.innerHTML = randomWord;
 }
 
-// Update score
 function updateScore() {
   score++;
   scoreEl.innerHTML = score;
 }
 
-// Update time
 function updateTime() {
   time--;
-  timeEl.innerHTML = time + 's';
-  console.log(time);
+  displayTime();
+}
 
-  if (time === 0) {
+function displayTime() {
+  timeEl.innerHTML = time + 's';
+
+  if (time <= 0) {
     clearInterval(interval);
-    // end game
     gameOver();
   }
 }
 
-// Game over, show end screen
 function gameOver() {
+  text.blur();
+  gameStarted = false;
+  let wpm = Math.floor(score/5);
   endgameEl.innerHTML = `
     <h1>Time ran out</h1>
-    <p>Your final score is ${score}</p>
+    <p>Your final score is ${score} words per minute</p>
     <button onclick="location.reload()">Reload</button>
   `;
 
@@ -113,36 +97,35 @@ function gameOver() {
 
 addWordToDOM();
 
-// Event listeners
-
-// Typing
 text.addEventListener('input', e => {
   if (!gameStarted) startGame();
-  const insertedText = e.target.value;
+  let insertedText = e.target.value;
+  let lastChar = insertedText.charAt(insertedText.length-1);
+  
+  if (lastChar === randomWord.charAt(charPos)){
+    charPos++;
+    updateScore();
+  } else {
+    insertedText = insertedText.substring(0, insertedText.length-1)
+    e.target.value = insertedText;
+    if (difficulty === 'hard') {
+      time -= 2;
+    } else if (difficulty === 'medium') {
+      time -= 1;
+    } 
+  }
 
   if (insertedText === randomWord) {
     addWordToDOM();
-    updateScore();
-
-    // Clear
+    charPos = 0;
     e.target.value = '';
-
-    if (difficulty === 'hard') {
-      time += 2;
-    } else if (difficulty === 'medium') {
-      time += 3;
-    } else {
-      time += 5;
-    }
-
-    updateTime();
   }
+
+  displayTime();
 });
 
-// Settings btn click
 settingsBtn.addEventListener('click', () => settings.classList.toggle('hide'));
 
-// Settings select
 settingsForm.addEventListener('change', e => {
   difficulty = e.target.value;
   localStorage.setItem('difficulty', difficulty);
