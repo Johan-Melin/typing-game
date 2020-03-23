@@ -53,6 +53,7 @@ function startGame() {
   interval = setInterval(updateTime, 1000);
 }
 
+displayTime();
 text.focus();
 
 function getRandomWord() {
