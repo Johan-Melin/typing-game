@@ -49,6 +49,7 @@ button:focus {
   height: 70px;
   color: #fff;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   transform: translateY(0);
@@ -119,4 +120,13 @@ input {
 .icon {
   font-size: 24px;
   font-weight: bold;
+}
+
+.highscore-container {
+  display: flex;
+  flex-direction: row;
+}
+
+span {
+  margin: 5px;
 }

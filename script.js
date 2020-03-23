@@ -8,7 +8,8 @@ const word = document.getElementById('word'),
   settings = document.getElementById('settings'),
   settingsForm = document.getElementById('settings-form'),
   difficultySelect = document.getElementById('difficulty'),
-  instructions = document.getElementById("instructions");
+  instructions = document.getElementById("instructions"),
+  highscoreEl = document.getElementById("highscore");
 
 let randomWord,
   score = 0,
@@ -16,7 +17,8 @@ let randomWord,
   gameStarted = false,
   interval,
   charPos = 0,
-  typed = 0;
+  typed = 0,
+  gameOverMessage;
 
 let difficulty =
   localStorage.getItem('difficulty') !== null
@@ -25,7 +27,30 @@ let difficulty =
 
 difficultySelect.value = difficulty;
 
+displayHighscores();
+
+function displayHighscores() {
+  highscoreEl.innerText = getHighscore(difficulty);
+}
+
+function getHighscore(diff) {
+  return localStorage.getItem(diff) !== null ? localStorage.getItem(diff) : "0";
+}
+
+function setHighscore(diff, points) {
+  localStorage.setItem(diff, points);
+  displayHighscores();
+}
+
+function checkHighscore() {
+  if (!getHighscore(difficulty) || score > getHighscore(difficulty)) {
+    setHighscore(difficulty, score);
+    gameOverMessage = "New highscore!";
+  }
+}
+
 function startGame() {
+  gameOverMessage = "Time is up!";
   gameStarted = true;
   instructions.innerText = "Type the following:";
   interval = setInterval(updateTime, 1000);
@@ -66,12 +91,13 @@ function displayTime() {
 function gameOver() {
   text.blur();
   gameStarted = false;
+  checkHighscore();
   let wpm = Math.floor(score/5);
   if (typed === 0)
     typed = 1;
   let acc = Math.floor(score/typed*100);
   endgameEl.innerHTML = `
-    <h1>Time ran out</h1>
+    <h1>${gameOverMessage}</h1>
     <p>Your final score is ${score} words per minute</p>
     <p>Your accuracy was ${acc}%</p>
     <button onclick="location.reload()">Reload</button>
