@@ -1,3 +1,4 @@
+import { words } from './words.js';
 const word = document.getElementById('word'),
   text = document.getElementById('text'),
   scoreEl = document.getElementById('score'),
@@ -8,29 +9,6 @@ const word = document.getElementById('word'),
   settingsForm = document.getElementById('settings-form'),
   difficultySelect = document.getElementById('difficulty'),
   instructions = document.getElementById("instructions");
-
-const words = [
-  'sigh',
-  'tense',
-  'airplane',
-  'ball',
-  'pies',
-  'juice',
-  'warlike',
-  'bad',
-  'north',
-  'dependent',
-  'steer',
-  'silver',
-  'highfalutin',
-  'superficial',
-  'quince',
-  'eight',
-  'feeble',
-  'admit',
-  'drag',
-  'loving'
-];
 
 let randomWord,
   score = 0,
