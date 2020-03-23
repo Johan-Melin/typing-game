@@ -34,10 +34,11 @@ const words = [
 
 let randomWord,
   score = 0,
-  time = 60,
+  time = 10,
   gameStarted = false,
   interval,
-  charPos = 0;
+  charPos = 0,
+  typed = 0;
 
 let difficulty =
   localStorage.getItem('difficulty') !== null
@@ -79,6 +80,7 @@ function displayTime() {
   if (time <= 0) {
     clearInterval(interval);
     gameOver();
+    typed = 0;
   }
 }
 
@@ -86,9 +88,13 @@ function gameOver() {
   text.blur();
   gameStarted = false;
   let wpm = Math.floor(score/5);
+  if (typed === 0)
+    typed = 1;
+  let acc = Math.floor(score/typed*100);
   endgameEl.innerHTML = `
     <h1>Time ran out</h1>
     <p>Your final score is ${score} words per minute</p>
+    <p>Your accuracy was ${acc}%</p>
     <button onclick="location.reload()">Reload</button>
   `;
 
@@ -99,6 +105,7 @@ addWordToDOM();
 
 text.addEventListener('input', e => {
   if (!gameStarted) startGame();
+  typed++;
   let insertedText = e.target.value;
   let lastChar = insertedText.charAt(insertedText.length-1);
   
