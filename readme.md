@@ -1,5 +1,9 @@
 Forked project from [here](https://github.com/bradtraversy/vanillawebprojects/tree/master/typing-game)
 
+*Modifications*
+1. Changed game rules. The game now tracks each letter typed and gives you a word per minute score.
+2. Modified difficulties. Easy gives no penalty, while each typo in medium/hard removes 1/2 seconds from time.
+
 *Improvements*
 1. The game now starts when you start typing instead of on load.
 2. Changing difficulty during the game now starts the game over.
